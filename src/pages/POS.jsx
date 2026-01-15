@@ -46,7 +46,7 @@ const POS = () => {
           productId: product._id,
           name: product.name,
           price: product.price,
-          image: product.image, // Ensure image is passed if your model has it
+          image: product.image, 
           quantity: 1,
         },
       ];
@@ -116,11 +116,8 @@ const POS = () => {
   );
 
   return (
-    // Added flex-col and overflow-hidden to the main container
     <div className="flex flex-col h-screen overflow-hidden bg-gray-50">
-      {/* Container wrapper for Search and Grid + Cart */}
       <div className="flex flex-1 overflow-hidden p-4 gap-6">
-        {/* Left Section: Product Search & Grid (Scrollable) */}
         <div className="flex-1 flex flex-col h-full min-w-0">
           <div className="mb-4">
             <input
@@ -146,7 +143,6 @@ const POS = () => {
           </div>
         </div>
 
-        {/* Right Section: Fixed Cart Sidebar (Scrollable internally) */}
         <aside className="w-96 flex flex-col h-[93%] bg-white rounded-lg shadow-lg overflow-hidden border">
           <Cart
             cart={cart}

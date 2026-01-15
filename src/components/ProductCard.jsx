@@ -1,5 +1,3 @@
-import React from "react";
-
 const ProductCard = ({ product, cart, addToCart }) => {
   const cartItem = cart.find((item) => item.productId === product._id);
   const qtyInCart = cartItem ? cartItem.quantity : 0;
@@ -12,7 +10,6 @@ const ProductCard = ({ product, cart, addToCart }) => {
       }`}
     >
       <div>
-        {/* Product Image Layout */}
         <div className="w-full h-48 mb-4 overflow-hidden rounded-md bg-gray-100">
           <img
             src={product.image}

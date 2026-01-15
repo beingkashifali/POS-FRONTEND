@@ -19,12 +19,10 @@ function Login({ setUserAuth }) {
     try {
       const res = await axios.post("http://localhost:8000/users/login", user);
 
-      // 1. Save to localStorage for persistence
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
       localStorage.setItem("username", res.data.username);
 
-      // 2. Update App State to trigger UI change instantly
       setUserAuth({
         token: res.data.token,
         role: res.data.role,

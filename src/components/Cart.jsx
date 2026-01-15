@@ -65,7 +65,6 @@ const Cart = ({
           )}
         </div>
 
-        {/* This footer area will now stay pinned at the bottom */}
         <div className="border-t pt-4 bg-white">
           <div className="flex justify-between text-xl font-bold mb-4">
             <span>Total</span>

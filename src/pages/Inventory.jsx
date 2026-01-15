@@ -10,9 +10,9 @@ function Inventory() {
     category: "",
     price: "",
     quantity: "",
+    image: "",
   });
   const [editId, setEditId] = useState(null);
-  setEditId;
   const token = localStorage.getItem("token");
 
   const fetchProducts = async function () {
@@ -22,10 +22,10 @@ function Inventory() {
       });
       setProducts(res.data.products);
     } catch (err) {
-      toast.error(err.response.data.msg);
-      // console.log(err);
+      console.log(err);
     }
   };
+
   useEffect(() => {
     fetchProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -40,14 +40,12 @@ function Inventory() {
     try {
       const deletedProduct = await axios.delete(
         `http://localhost:8000/products/${id}`,
-        {
-          headers: { Authorization: token },
-        }
+        { headers: { Authorization: token } }
       );
       toast.success(deletedProduct.data.msg);
       fetchProducts();
     } catch (err) {
-      toast.error(err.response.data.msg);
+      console.log(err);
     }
   };
 
@@ -58,12 +56,13 @@ function Inventory() {
       category: product.category,
       price: product.price,
       quantity: product.quantity,
+      image: product.image || "", // Updated: populated image for editing
     });
   };
 
   const cancelEditHandler = () => {
     setEditId(null);
-    setForm({ name: "", category: "", price: "", quantity: "" });
+    setForm({ name: "", category: "", price: "", quantity: "", image: "" });
   };
 
   const submitHandler = async function (e) {
@@ -71,28 +70,23 @@ function Inventory() {
     try {
       if (editId) {
         const updatedProduct = await axios.patch(
-          `http://localhost:8000/products/${editId}`,
+          `http://localhost:8000/api/products/${editId}`,
           form,
-          {
-            headers: { Authorization: token },
-          }
+          { headers: { Authorization: token } }
         );
         toast.success(updatedProduct.data.msg);
       } else {
         const addProduct = await axios.post(
-          "http://localhost:8000/products",
+          "http://localhost:8000/api/products",
           form,
-          {
-            headers: { Authorization: token },
-          }
+          { headers: { Authorization: token } }
         );
         toast.success(addProduct.data.msg);
       }
-      setEditId(null);
-      setForm({ name: "", category: "", price: "", quantity: "" });
+      cancelEditHandler();
       fetchProducts();
     } catch (err) {
-      toast.error(err.response.data.msg);
+      toast.error(err.response?.data?.msg || "Error saving product");
     }
   };
 
@@ -101,6 +95,7 @@ function Inventory() {
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
   return (
     <div className="container mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">
@@ -113,20 +108,18 @@ function Inventory() {
           {editId ? "Edit Product" : "Add New Product"}
         </h3>
 
+        {/* Updated: md:grid-cols-6 to accommodate the new input */}
         <form
           onSubmit={submitHandler}
-          className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end"
+          className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end"
         >
-          <div className="md:col-span-2">
-            <label className="block text-sm text-gray-600 mb-1">
-              Product Name
-            </label>
+          <div className="md:col-span-1">
+            <label className="block text-sm text-gray-600 mb-1">Name</label>
             <input
               className="w-full border p-2 rounded focus:outline-blue-500 border-gray-300"
               name="name"
               value={form.name}
               onChange={changeHandler}
-              placeholder="e.g. Wireless Mouse"
               required
             />
           </div>
@@ -137,7 +130,6 @@ function Inventory() {
               name="category"
               value={form.category}
               onChange={changeHandler}
-              placeholder="e.g. Electronics"
               required
             />
           </div>
@@ -151,7 +143,6 @@ function Inventory() {
               name="price"
               value={form.price}
               onChange={changeHandler}
-              placeholder="0.00"
               required
             />
           </div>
@@ -163,12 +154,25 @@ function Inventory() {
               name="quantity"
               value={form.quantity}
               onChange={changeHandler}
-              placeholder="0"
               required
             />
           </div>
 
-          {/* Action Buttons */}
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">
+              Image URL
+            </label>
+            <input
+              type="text"
+              className="w-full border p-2 rounded focus:outline-blue-500 border-gray-300"
+              name="image"
+              value={form.image}
+              onChange={changeHandler}
+              placeholder="https://..."
+              required
+            />
+          </div>
+
           <div className="flex gap-2">
             <button
               type="submit"
@@ -181,7 +185,6 @@ function Inventory() {
             >
               {editId ? "Update" : "Add"}
             </button>
-
             {editId && (
               <button
                 type="button"
@@ -195,34 +198,24 @@ function Inventory() {
         </form>
       </div>
 
+      {/* Search and Table remain the same... */}
       <div className="mb-6 relative max-w-xl">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg
-            className="h-5 w-5 text-gray-400"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
         <input
           type="text"
-          placeholder="Search products by name or category..."
-          className="block w-full pl-10 pr-3 py-2 border border-gray-300  leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm text-sm"
+          placeholder="Search products..."
+          className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      {/* Product List Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
         <table className="min-w-full leading-normal">
           <thead>
             <tr>
+              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">
+                Image
+              </th>
               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase">
                 Name
               </th>
@@ -243,6 +236,13 @@ function Inventory() {
           <tbody>
             {filteredProducts.map((product) => (
               <tr key={product._id} className="hover:bg-gray-50">
+                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="h-10 w-10 object-cover rounded"
+                  />
+                </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm font-medium">
                   {product.name}
                 </td>
@@ -281,13 +281,6 @@ function Inventory() {
                 </td>
               </tr>
             ))}
-            {filteredProducts.length === 0 && (
-              <tr>
-                <td colSpan="5" className="px-5 py-5 text-center text-gray-500">
-                  No products found. Add one above!
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>

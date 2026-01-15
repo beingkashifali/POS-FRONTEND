@@ -52,7 +52,6 @@ function SalesHistory() {
           {role === "manager" ? "All Sales Records" : "My Sales History"}
         </h2>
 
-        {/* Total Revenue Card */}
         <div className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow">
           <span className="block text-xs opacity-75 uppercase">
             {role === "manager" && filterCashier === ""
@@ -65,7 +64,6 @@ function SalesHistory() {
         </div>
       </div>
 
-      {/* Admin Controls: Filter by Cashier */}
       {role === "manager" && (
         <div className="mb-6 bg-white p-4 rounded shadow border border-gray-200 flex items-center gap-4">
           <span className="text-gray-600 font-semibold">
@@ -86,7 +84,6 @@ function SalesHistory() {
         </div>
       )}
 
-      {/* Sales Table */}
       <div className="bg-white shadow rounded-lg overflow-hidden border border-gray-200">
         <table className="min-w-full leading-normal">
           <thead>

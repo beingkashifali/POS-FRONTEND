@@ -70,7 +70,6 @@ function UserManagement() {
     <div className="container mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Manage Users</h2>
 
-      {/* Add User Form */}
       <div className="bg-white p-6 rounded-lg shadow mb-8">
         <h3 className="text-lg font-semibold mb-4">Add New Cashier</h3>
         <form className="flex gap-4 items-end" onSubmit={submitHandler}>
@@ -115,7 +114,6 @@ function UserManagement() {
         </form>
       </div>
 
-      {/* User List */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <table className="min-w-full leading-normal">
           <thead>
