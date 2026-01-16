@@ -21,9 +21,7 @@ function UserManagement() {
     try {
       const res = await axios.get(
         "https://pos-backend-3fgf.onrender.com/users",
-        {
-          headers: { Authorization: token },
-        }
+        { headers: { Authorization: token } }
       );
       setUsers(res.data);
     } catch (err) {
@@ -50,9 +48,7 @@ function UserManagement() {
       const res = await axios.post(
         "https://pos-backend-3fgf.onrender.com/users/register",
         form,
-        {
-          headers: { Authorization: token },
-        }
+        { headers: { Authorization: token } }
       );
       toast.success(res.data.msg);
       setForm({ username: "", password: "", role: "cashier" });
@@ -73,9 +69,7 @@ function UserManagement() {
     try {
       const deletedUser = await axios.delete(
         `https://pos-backend-3fgf.onrender.com/users/${deleteId}`,
-        {
-          headers: { Authorization: token },
-        }
+        { headers: { Authorization: token } }
       );
       toast.success(deletedUser.data.msg);
       fetchUsers();
@@ -91,11 +85,10 @@ function UserManagement() {
     <div className="min-h-screen bg-linear-to-br from-indigo-50 via-white to-cyan-50 p-6">
       <div className="container mx-auto max-w-7xl">
         <h2 className="text-4xl font-extrabold text-gray-900 mb-8 text-center tracking-tight flex items-center justify-center">
-          <FaUsers className="mr-3 text-blue-600" />
-          User Management
+          <FaUsers className="mr-3 text-blue-600" /> User Management
         </h2>
 
-        {/* Add New User Form */}
+        {/* Add User Form */}
         <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 mb-8 hover:shadow-2xl transition-all duration-300">
           <div className="flex items-center mb-6">
             <FaUserPlus className="text-blue-600 text-2xl mr-3" />
@@ -110,11 +103,10 @@ function UserManagement() {
           >
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 items-center">
-                <FaUser className="mr-2 text-gray-500" />
-                Username
+                <FaUser className="mr-2 text-gray-500" /> Username
               </label>
               <input
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 name="username"
                 value={form.username}
                 onChange={changeHandler}
@@ -124,11 +116,10 @@ function UserManagement() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 items-center">
-                <FaLock className="mr-2 text-gray-500" />
-                Password
+                <FaLock className="mr-2 text-gray-500" /> Password
               </label>
               <input
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 type="password"
                 name="password"
                 value={form.password}
@@ -142,7 +133,7 @@ function UserManagement() {
                 Role
               </label>
               <select
-                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 name="role"
                 value={form.role}
                 onChange={changeHandler}
@@ -154,7 +145,7 @@ function UserManagement() {
             <button
               type="submit"
               disabled={loading}
-              className={`bg-linear-to-r from-blue-500 to-blue-600 text-white p-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all transform hover:scale-105 font-semibold flex items-center justify-center ${
+              className={`bg-linear-to-r from-blue-500 to-blue-600 text-white p-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all font-semibold flex items-center justify-center ${
                 loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
@@ -165,33 +156,30 @@ function UserManagement() {
                 </>
               ) : (
                 <>
-                  <FaUserPlus className="mr-2" />
-                  Add User
+                  <FaUserPlus className="mr-2" /> Add User
                 </>
               )}
             </button>
           </form>
         </div>
 
-        {/* Users Table */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300">
+        {/* Users Table with Loader */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300 min-h-75">
           {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-              <span className="ml-3 text-gray-600">Loading users...</span>
+            <div className="loader-container">
+              <div className="loader"></div>
             </div>
           ) : (
             <table className="min-w-full leading-normal">
               <thead className="bg-linear-to-r from-gray-100 to-gray-200">
                 <tr>
-                  <th className="px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider flex items-center">
-                    <FaUser className="mr-2" />
-                    Username
+                  <th className="px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase flex items-center">
+                    <FaUser className="mr-2" /> Username
                   </th>
-                  <th className="px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase">
                     Role
                   </th>
-                  <th className="px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase">
                     Actions
                   </th>
                 </tr>
@@ -200,7 +188,7 @@ function UserManagement() {
                 {users.map((user) => (
                   <tr
                     key={user._id}
-                    className="hover:bg-gray-50 transition-colors duration-200"
+                    className="hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-6 py-5 border-b border-gray-200 bg-white text-sm font-medium text-gray-900">
                       {user.username}
@@ -219,10 +207,9 @@ function UserManagement() {
                     <td className="px-6 py-5 border-b border-gray-200 bg-white text-sm">
                       <button
                         onClick={() => confirmDelete(user._id)}
-                        className="text-red-600 hover:text-red-900 font-semibold transition-colors flex items-center"
+                        className="text-red-600 hover:text-red-900 font-semibold flex items-center"
                       >
-                        <FaTrash className="mr-1" />
-                        Delete
+                        <FaTrash className="mr-1" /> Delete
                       </button>
                     </td>
                   </tr>
@@ -232,25 +219,24 @@ function UserManagement() {
           )}
         </div>
 
-        {/* Delete Confirmation Modal */}
+        {/* Delete Modal */}
         {showDeleteModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full mx-4">
               <h3 className="text-lg font-semibold mb-4">Confirm Deletion</h3>
               <p className="text-gray-600 mb-6">
-                Are you sure you want to delete this user? This action cannot be
-                undone.
+                Are you sure you want to delete this user?
               </p>
               <div className="flex gap-4">
                 <button
                   onClick={deleteHandler}
-                  className="flex-1 bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 transition-colors"
+                  className="flex-1 bg-red-500 text-white p-3 rounded-lg hover:bg-red-600"
                 >
                   Delete
                 </button>
                 <button
                   onClick={() => setShowDeleteModal(false)}
-                  className="flex-1 bg-gray-500 text-white p-3 rounded-lg hover:bg-gray-600 transition-colors"
+                  className="flex-1 bg-gray-500 text-white p-3 rounded-lg hover:bg-gray-600"
                 >
                   Cancel
                 </button>

@@ -1,5 +1,10 @@
 import React from "react";
-import { FaCartPlus, FaBoxOpen, FaCircleExclamation } from "react-icons/fa6";
+import {
+  FaCartPlus,
+  FaBoxOpen,
+  FaCircleExclamation,
+  FaBox,
+} from "react-icons/fa6"; // Added FaBox
 
 const ProductCard = ({ product, cart, addToCart }) => {
   const cartItem = cart.find((item) => item.productId === product._id);
@@ -10,7 +15,7 @@ const ProductCard = ({ product, cart, addToCart }) => {
 
   return (
     <div className="group flex flex-col h-full bg-white rounded-xl border border-slate-200 shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-300 overflow-hidden">
-      {/* IMAGE CONTAINER - Clean White Background */}
+      {/* IMAGE CONTAINER */}
       <div className="relative h-48 w-full p-6 flex items-center justify-center bg-white border-b border-slate-100">
         {product.image ? (
           <img
@@ -29,16 +34,27 @@ const ProductCard = ({ product, cart, addToCart }) => {
           </div>
         )}
 
-        {/* STATUS BADGES - Top Right (Minimal) */}
+        {/* --- MODIFIED SECTION: STATUS BADGES --- */}
         <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
+          {/* Always show current stock */}
+          <span
+            className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded border ${
+              availableStock > 0
+                ? "bg-blue-50 text-blue-700 border-blue-100"
+                : "bg-slate-100 text-slate-500 border-slate-200"
+            }`}
+          >
+            <FaBox /> Stock: {availableStock}
+          </span>
+
           {isLowStock && (
             <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-[10px] font-bold px-2 py-1 rounded border border-amber-100">
-              <FaCircleExclamation /> Low Stock: {availableStock}
+              <FaCircleExclamation /> Low
             </span>
           )}
         </div>
+        {/* --------------------------------------- */}
 
-        {/* OUT OF STOCK OVERLAY */}
         {isOutOfStock && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-[1px]">
             <span className="bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">

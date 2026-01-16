@@ -29,9 +29,7 @@ const POS = () => {
     try {
       const res = await axios.get(
         "https://pos-backend-3fgf.onrender.com/products",
-        {
-          headers: { Authorization: token },
-        }
+        { headers: { Authorization: token } }
       );
       setProducts(res.data.products);
     } catch (err) {
@@ -143,7 +141,7 @@ const POS = () => {
               <input
                 type="text"
                 placeholder="Search products..."
-                className="w-full pl-10 pr-4 py-3 bg-white rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow shadow-sm"
+                className="w-full pl-10 pr-4 py-3 bg-white rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -151,7 +149,7 @@ const POS = () => {
             <div className="relative min-w-45">
               <FaFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <select
-                className="w-full pl-10 pr-8 py-3 bg-white rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer shadow-sm"
+                className="w-full pl-10 pr-8 py-3 bg-white rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer shadow-sm"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
@@ -168,8 +166,8 @@ const POS = () => {
 
         <div className="flex-1 overflow-y-auto px-8 pb-8 custom-scrollbar">
           {loading ? (
-            <div className="h-full flex justify-center items-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+            <div className="loader-container h-full">
+              <div className="loader"></div>
             </div>
           ) : filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

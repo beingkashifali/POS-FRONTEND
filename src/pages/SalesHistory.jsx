@@ -16,7 +16,7 @@ function SalesHistory() {
   const [filterCashier, setFilterCashier] = useState("");
   const [uniqueCashiers, setUniqueCashiers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [expandedRows, setExpandedRows] = useState(new Set()); // For expandable rows
+  const [expandedRows, setExpandedRows] = useState(new Set());
 
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
@@ -26,9 +26,7 @@ function SalesHistory() {
     try {
       const res = await axios.get(
         "https://pos-backend-3fgf.onrender.com/sales",
-        {
-          headers: { Authorization: token },
-        }
+        { headers: { Authorization: token } }
       );
       setSales(res.data);
 
@@ -82,7 +80,7 @@ function SalesHistory() {
             {role === "manager" ? "All Sales Records" : "My Sales History"}
           </h2>
 
-          <div className="bg-white p-4 md:p-6 rounded-2xl shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 w-full lg:w-auto">
+          <div className="bg-white p-4 md:p-6 rounded-2xl shadow-xl border border-gray-100 w-full lg:w-auto">
             <div className="flex items-center mb-2">
               <FaDollarSign className="text-green-600 mr-2" />
               <span className="text-sm font-medium text-gray-600 uppercase tracking-wide">
@@ -100,7 +98,7 @@ function SalesHistory() {
         </div>
 
         {role === "manager" && (
-          <div className="mb-6 md:mb-8 bg-white p-4 md:p-6 rounded-2xl shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300">
+          <div className="mb-6 md:mb-8 bg-white p-4 md:p-6 rounded-2xl shadow-xl border border-gray-100">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex items-center gap-2">
                 <FaFilter className="text-blue-600 text-xl" />
@@ -109,7 +107,7 @@ function SalesHistory() {
                 </span>
               </div>
               <select
-                className="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all w-full sm:w-auto"
+                className="border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
                 value={filterCashier}
                 onChange={(e) => setFilterCashier(e.target.value)}
               >
@@ -124,36 +122,29 @@ function SalesHistory() {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300 min-h-75">
           {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-              <span className="ml-3 text-gray-600">
-                Loading sales history...
-              </span>
+            <div className="loader-container">
+              <div className="loader"></div>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full leading-normal">
                 <thead className="bg-linear-to-r from-gray-100 to-gray-200">
                   <tr>
-                    <th className="px-4 md:px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      <FaCalendarAlt className="inline mr-2" />
-                      Date & Time
+                    <th className="px-4 md:px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase">
+                      <FaCalendarAlt className="inline mr-2" /> Date & Time
                     </th>
-                    <th className="px-4 md:px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      <FaUser className="inline mr-2" />
-                      Cashier
+                    <th className="px-4 md:px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase">
+                      <FaUser className="inline mr-2" /> Cashier
                     </th>
-                    <th className="px-4 md:px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      <FaShoppingBag className="inline mr-2" />
-                      Items Sold
+                    <th className="px-4 md:px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase">
+                      <FaShoppingBag className="inline mr-2" /> Items Sold
                     </th>
-                    <th className="px-4 md:px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      <FaDollarSign className="inline mr-2" />
-                      Sale Total
+                    <th className="px-4 md:px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase">
+                      <FaDollarSign className="inline mr-2" /> Sale Total
                     </th>
-                    <th className="px-4 md:px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-4 md:px-6 py-4 border-b border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase">
                       Details
                     </th>
                   </tr>
@@ -161,7 +152,7 @@ function SalesHistory() {
                 <tbody>
                   {filteredSales.map((sale) => (
                     <React.Fragment key={sale._id}>
-                      <tr className="hover:bg-gray-50 transition-colors duration-200">
+                      <tr className="hover:bg-gray-50 transition-colors">
                         <td className="px-4 md:px-6 py-5 border-b border-gray-200 bg-white text-sm font-medium text-gray-900">
                           {new Date(sale.createdAt).toLocaleString()}
                         </td>
@@ -172,28 +163,20 @@ function SalesHistory() {
                         </td>
                         <td className="px-4 md:px-6 py-5 border-b border-gray-200 bg-white text-sm text-gray-600">
                           <div className="max-w-xs">
-                            {sale.products.length > 3 ? (
-                              <>
-                                {sale.products.slice(0, 3).map((p, idx) => (
-                                  <div key={idx}>
-                                    {p.name} (x{p.quantity})
-                                  </div>
-                                ))}
-                                <span
-                                  className="text-blue-600 cursor-pointer"
-                                  onClick={() => toggleRowExpansion(sale._id)}
-                                >
-                                  {expandedRows.has(sale._id)
-                                    ? "Show less..."
-                                    : `+${sale.products.length - 3} more...`}
-                                </span>
-                              </>
-                            ) : (
-                              sale.products.map((p, idx) => (
-                                <div key={idx}>
-                                  {p.name} (x{p.quantity})
-                                </div>
-                              ))
+                            {sale.products.slice(0, 3).map((p, idx) => (
+                              <div key={idx}>
+                                {p.name} (x{p.quantity})
+                              </div>
+                            ))}
+                            {sale.products.length > 3 && (
+                              <span
+                                className="text-blue-600 cursor-pointer"
+                                onClick={() => toggleRowExpansion(sale._id)}
+                              >
+                                {expandedRows.has(sale._id)
+                                  ? "Show less..."
+                                  : `+${sale.products.length - 3} more...`}
+                              </span>
                             )}
                           </div>
                         </td>
@@ -203,7 +186,7 @@ function SalesHistory() {
                         <td className="px-4 md:px-6 py-5 border-b border-gray-200 bg-white text-sm">
                           <button
                             onClick={() => toggleRowExpansion(sale._id)}
-                            className="text-blue-600 hover:text-blue-800 transition-colors"
+                            className="text-blue-600 hover:text-blue-800"
                           >
                             {expandedRows.has(sale._id) ? (
                               <FaChevronUp />
@@ -240,7 +223,6 @@ function SalesHistory() {
                       )}
                     </React.Fragment>
                   ))}
-
                   {filteredSales.length === 0 && (
                     <tr>
                       <td
