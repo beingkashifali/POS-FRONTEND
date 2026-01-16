@@ -37,9 +37,12 @@ function Inventory() {
   const fetchProducts = async function () {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:8000/products", {
-        headers: { Authorization: token },
-      });
+      const res = await axios.get(
+        "https://pos-backend-3fgf.onrender.com/products",
+        {
+          headers: { Authorization: token },
+        }
+      );
       setProducts(res.data.products);
     } catch (err) {
       toast.error("Failed to fetch products");
@@ -62,7 +65,7 @@ function Inventory() {
   const deleteHandler = async function (id) {
     try {
       const deletedProduct = await axios.delete(
-        `http://localhost:8000/products/${id}`,
+        `https://pos-backend-3fgf.onrender.com/products/${id}`,
         { headers: { Authorization: token } }
       );
       toast.success(deletedProduct.data.msg);
@@ -103,14 +106,14 @@ function Inventory() {
     try {
       if (editId) {
         const updatedProduct = await axios.patch(
-          `http://localhost:8000/api/products/${editId}`,
+          `https://pos-backend-3fgf.onrender.com/products/${editId}`,
           form,
           { headers: { Authorization: token } }
         );
         toast.success(updatedProduct.data.msg);
       } else {
         const addProduct = await axios.post(
-          "http://localhost:8000/api/products",
+          "https://pos-backend-3fgf.onrender.com/products",
           form,
           { headers: { Authorization: token } }
         );

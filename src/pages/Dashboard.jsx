@@ -11,12 +11,18 @@ function Dashboard() {
   const fetchData = async function () {
     const token = localStorage.getItem("token");
     try {
-      const salesData = await axios.get("http://localhost:8000/sales", {
-        headers: { Authorization: token },
-      });
-      const productsData = await axios.get("http://localhost:8000/products", {
-        headers: { Authorization: token },
-      });
+      const salesData = await axios.get(
+        "https://pos-backend-3fgf.onrender.com/sales",
+        {
+          headers: { Authorization: token },
+        }
+      );
+      const productsData = await axios.get(
+        "https://pos-backend-3fgf.onrender.com/products",
+        {
+          headers: { Authorization: token },
+        }
+      );
       setSales(salesData.data);
       setProducts(productsData.data.products);
     } catch (err) {

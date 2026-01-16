@@ -27,9 +27,12 @@ const POS = () => {
   const fetchProducts = async (isBackground = false) => {
     if (!isBackground) setLoading(true);
     try {
-      const res = await axios.get("http://localhost:8000/products", {
-        headers: { Authorization: token },
-      });
+      const res = await axios.get(
+        "https://pos-backend-3fgf.onrender.com/products",
+        {
+          headers: { Authorization: token },
+        }
+      );
       setProducts(res.data.products);
     } catch (err) {
       console.error("Error fetching products");
@@ -93,7 +96,7 @@ const POS = () => {
   const handleCheckout = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:8000/sales",
+        "https://pos-backend-3fgf.onrender.com/sales",
         { products: cart, totalAmount: total },
         { headers: { Authorization: token } }
       );

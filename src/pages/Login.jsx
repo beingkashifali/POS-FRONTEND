@@ -19,7 +19,10 @@ function Login({ setUserAuth }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:8000/users/login", user);
+      const res = await axios.post(
+        "https://pos-backend-3fgf.onrender.com/users/login",
+        user
+      );
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);

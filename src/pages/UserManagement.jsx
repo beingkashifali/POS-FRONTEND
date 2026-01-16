@@ -19,9 +19,12 @@ function UserManagement() {
   const fetchUsers = async function () {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:8000/users", {
-        headers: { Authorization: token },
-      });
+      const res = await axios.get(
+        "https://pos-backend-3fgf.onrender.com/users",
+        {
+          headers: { Authorization: token },
+        }
+      );
       setUsers(res.data);
     } catch (err) {
       toast.error(err.response?.data?.msg || "Failed to fetch users");
@@ -45,7 +48,7 @@ function UserManagement() {
     setLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:8000/users/register",
+        "https://pos-backend-3fgf.onrender.com/users/register",
         form,
         {
           headers: { Authorization: token },
@@ -69,7 +72,7 @@ function UserManagement() {
   const deleteHandler = async function () {
     try {
       const deletedUser = await axios.delete(
-        `http://localhost:8000/users/${deleteId}`,
+        `https://pos-backend-3fgf.onrender.com/users/${deleteId}`,
         {
           headers: { Authorization: token },
         }

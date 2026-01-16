@@ -24,9 +24,12 @@ function SalesHistory() {
   const fetchSales = async function () {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:8000/sales", {
-        headers: { Authorization: token },
-      });
+      const res = await axios.get(
+        "https://pos-backend-3fgf.onrender.com/sales",
+        {
+          headers: { Authorization: token },
+        }
+      );
       setSales(res.data);
 
       if (role === "manager") {
