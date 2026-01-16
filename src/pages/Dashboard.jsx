@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaDollarSign, FaBoxOpen, FaReceipt } from "react-icons/fa"; // Importing Font Awesome icons
+import { FaDollarSign, FaBoxOpen, FaReceipt } from "react-icons/fa";
 
 function Dashboard() {
   const [sales, setSales] = useState([]);
