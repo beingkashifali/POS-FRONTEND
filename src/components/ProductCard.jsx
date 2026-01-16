@@ -1,52 +1,86 @@
+import React from "react";
+import { FaCartPlus, FaBoxOpen, FaCircleExclamation } from "react-icons/fa6";
+
 const ProductCard = ({ product, cart, addToCart }) => {
   const cartItem = cart.find((item) => item.productId === product._id);
   const qtyInCart = cartItem ? cartItem.quantity : 0;
   const availableStock = product.quantity - qtyInCart;
+  const isOutOfStock = availableStock <= 0;
+  const isLowStock = availableStock < 5 && availableStock > 0;
 
   return (
-    <div
-      className={`bg-white p-4 rounded-lg shadow border flex flex-col justify-between ${
-        availableStock === 0 ? "opacity-50" : ""
-      }`}
-    >
-      <div>
-        <div className="w-full h-48 mb-4 overflow-hidden rounded-md bg-gray-100">
+    <div className="group flex flex-col h-full bg-white rounded-xl border border-slate-200 shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-300 overflow-hidden">
+      {/* IMAGE CONTAINER - Clean White Background */}
+      <div className="relative h-48 w-full p-6 flex items-center justify-center bg-white border-b border-slate-100">
+        {product.image ? (
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            className={`w-full h-full object-contain transition-transform duration-300 group-hover:scale-105 ${
+              isOutOfStock ? "grayscale opacity-30" : ""
+            }`}
           />
+        ) : (
+          <div className="flex flex-col items-center justify-center text-slate-300">
+            <FaBoxOpen className="text-4xl mb-2 opacity-50" />
+            <span className="text-[10px] uppercase font-bold tracking-wider">
+              No Image
+            </span>
+          </div>
+        )}
+
+        {/* STATUS BADGES - Top Right (Minimal) */}
+        <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
+          {isLowStock && (
+            <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-[10px] font-bold px-2 py-1 rounded border border-amber-100">
+              <FaCircleExclamation /> Low Stock: {availableStock}
+            </span>
+          )}
         </div>
 
-        <h4 className="font-bold text-lg text-gray-800">{product.name}</h4>
-        <p className="text-gray-500 text-sm uppercase">{product.category}</p>
+        {/* OUT OF STOCK OVERLAY */}
+        {isOutOfStock && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-[1px]">
+            <span className="bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+              Out of Stock
+            </span>
+          </div>
+        )}
       </div>
 
-      <div className="mt-4 flex justify-between items-center">
-        <span className="text-xl font-semibold text-blue-600">
-          ${product.price}
-        </span>
-        <span
-          className={`text-sm font-bold ${
-            availableStock < 5 ? "text-red-500" : "text-green-600"
-          }`}
-        >
-          {availableStock} Left
-        </span>
-      </div>
+      {/* CARD BODY */}
+      <div className="flex flex-col flex-1 p-4">
+        <div className="mb-1">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+            {product.category}
+          </span>
+          <h3
+            className="text-slate-800 font-semibold text-sm leading-snug line-clamp-2 h-10"
+            title={product.name}
+          >
+            {product.name}
+          </h3>
+        </div>
 
-      <button
-        disabled={availableStock <= 0}
-        onClick={() => addToCart(product)}
-        className={`mt-3 w-full py-2 rounded text-white font-medium transition
-          ${
-            availableStock > 0
-              ? "bg-blue-500 hover:bg-blue-600"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
-      >
-        {availableStock > 0 ? "Add to Cart" : "Out of Stock"}
-      </button>
+        <div className="mt-auto pt-3 flex items-center justify-between">
+          <span className="text-lg font-bold text-slate-900">
+            ${Number(product.price).toFixed(2)}
+          </span>
+
+          <button
+            disabled={isOutOfStock}
+            onClick={() => addToCart(product)}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-colors ${
+              isOutOfStock
+                ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                : "bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white active:bg-blue-700"
+            }`}
+          >
+            <FaCartPlus />
+            Add
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { FaSearch, FaFilter, FaStore } from "react-icons/fa";
 import ProductCard from "../components/ProductCard";
 import InvoiceModal from "../components/InvoiceModel";
 import Cart from "../components/Cart";
@@ -12,18 +13,19 @@ const POS = () => {
   const [showInvoice, setShowInvoice] = useState(false);
   const [lastSale, setLastSale] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
   const cashierName = localStorage.getItem("username");
 
   useEffect(() => {
     fetchProducts();
-    const interval = setInterval(fetchProducts, 5000);
-    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (isBackground = false) => {
+    if (!isBackground) setLoading(true);
     try {
       const res = await axios.get("http://localhost:8000/products", {
         headers: { Authorization: token },
@@ -31,6 +33,8 @@ const POS = () => {
       setProducts(res.data.products);
     } catch (err) {
       console.error("Error fetching products");
+    } finally {
+      if (!isBackground) setLoading(false);
     }
   };
 
@@ -39,19 +43,21 @@ const POS = () => {
     if (existing) {
       updateQuantity(product._id, 1);
     } else {
-      if (product.quantity < 1) return alert("Out of stock!");
-      const newCart = [
+      if (product.quantity < 1) return;
+      setCart([
         ...cart,
         {
           productId: product._id,
           name: product.name,
           price: product.price,
-          image: product.image, 
+          image: product.image,
           quantity: 1,
         },
-      ];
-      setCart(newCart);
-      calculateTotal(newCart);
+      ]);
+      calculateTotal([
+        ...cart,
+        { productId: product._id, price: product.price, quantity: 1 },
+      ]);
     }
   };
 
@@ -59,18 +65,12 @@ const POS = () => {
     const product = products.find((p) => p._id === productId);
     const existing = cart.find((item) => item.productId === productId);
     if (!existing) return;
-
     const newQuantity = existing.quantity + delta;
-
     if (newQuantity <= 0) {
       removeFromCart(productId);
       return;
     }
-    if (newQuantity > product.quantity) {
-      alert("Cannot exceed available stock!");
-      return;
-    }
-
+    if (newQuantity > product.quantity) return;
     const newCart = cart.map((item) =>
       item.productId === productId ? { ...item, quantity: newQuantity } : item
     );
@@ -85,11 +85,9 @@ const POS = () => {
   };
 
   const calculateTotal = (currentCart) => {
-    const newTotal = currentCart.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0
+    setTotal(
+      currentCart.reduce((acc, item) => acc + item.price * item.quantity, 0)
     );
-    setTotal(newTotal);
   };
 
   const handleCheckout = async () => {
@@ -109,28 +107,69 @@ const POS = () => {
     }
   };
 
+  const categories = [...new Set(products.map((p) => p.category))];
   const filteredProducts = products.filter(
     (p) =>
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchTerm.toLowerCase())
+      (p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (selectedCategory === "" || p.category === selectedCategory)
   );
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-gray-50">
-      <div className="flex flex-1 overflow-hidden p-4 gap-6">
-        <div className="flex-1 flex flex-col h-full min-w-0">
-          <div className="mb-4">
-            <input
-              type="text"
-              placeholder="Search products..."
-              className="w-full p-3 border rounded-lg shadow-sm focus:outline-blue-500"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+    <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-slate-50 font-sans">
+      {/* LEFT: PRODUCTS */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <div className="px-8 py-6 pb-2">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+                Point of Sale
+              </h1>
+              <p className="text-slate-500 text-sm">
+                Manage transactions efficiently
+              </p>
+            </div>
+            <div className="text-sm font-medium text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200">
+              <FaStore className="inline mr-2 text-blue-500" /> {cashierName}
+            </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto pr-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="flex gap-4">
+            <div className="relative flex-1">
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search products..."
+                className="w-full pl-10 pr-4 py-3 bg-white rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow shadow-sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="relative min-w-45">
+              <FaFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <select
+                className="w-full pl-10 pr-8 py-3 bg-white rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer shadow-sm"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="">All Categories</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-8 pb-8 custom-scrollbar">
+          {loading ? (
+            <div className="h-full flex justify-center items-center">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+            </div>
+          ) : filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredProducts.map((p) => (
                 <ProductCard
                   key={p._id}
@@ -140,18 +179,24 @@ const POS = () => {
                 />
               ))}
             </div>
-          </div>
+          ) : (
+            <div className="h-64 flex flex-col items-center justify-center text-slate-400">
+              <p>No products found</p>
+            </div>
+          )}
         </div>
+      </div>
 
-        <aside className="w-96 flex flex-col h-[93%] bg-white rounded-lg shadow-lg overflow-hidden border">
-          <Cart
-            cart={cart}
-            total={total}
-            removeFromCart={removeFromCart}
-            updateQuantity={updateQuantity}
-            handleCheckout={handleCheckout}
-          />
-        </aside>
+      {/* RIGHT: CART */}
+      <div className="w-95 z-20 h-full">
+        <Cart
+          cart={cart}
+          total={total}
+          removeFromCart={removeFromCart}
+          updateQuantity={updateQuantity}
+          handleCheckout={handleCheckout}
+          loading={loading}
+        />
       </div>
 
       <InvoiceModal
